@@ -1,0 +1,30 @@
+{
+  "name": "topologyjs-vue-component",
+  "version": "1.0.0",
+  "description": "在topology.js中使用vue组件",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wehuss/topologyjs-vue-component.git"
+  },
+  "keywords": [
+    "topology.js",
+    "topology"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wehuss/topologyjs-vue-component/issues"
+  },
+  "homepage": "https://github.com/wehuss/topologyjs-vue-component#readme",
+  "devDependencies": {
+    "@topology/core": "^1.1.27",
+    "topology.js": "^1.1.27",
+    "typescript": "^4.5.4",
+    "vite": "^2.9.9",
+    "vue": "^3.2.37"
+  }
+}
