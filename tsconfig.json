@@ -1,5 +1,5 @@
 {
-  "compileOnSave": false,
+  "compileOnSave": true,
   "compilerOptions": {
     "outDir": "./dist",
     "sourceMap": true,
@@ -18,6 +18,6 @@
     "allowSyntheticDefaultImports":true,
     "skipLibCheck": true
   },
-  "include": ["src/**/*.ts","src/**/*d.ts"],
+  "include": ["lib/**/*.ts","lib/**/*d.ts", "index.ts"],
   "exclude": ["node_modules", "dist"]
 }

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "在topology.js中使用vue组件",
   "files": ["dist"],
-  "main": "./dist/index.js",
+  "main": "./dist/index",
   "types": "./dist/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

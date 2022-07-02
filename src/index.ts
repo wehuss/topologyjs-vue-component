@@ -1,1 +1,0 @@
-export * from './topologyjs-vue-component'
