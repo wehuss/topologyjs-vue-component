@@ -1,1 +1,1 @@
-export { registerVueComponents } from './topologyjs-vue-component'
+export * from './topologyjs-vue-component'

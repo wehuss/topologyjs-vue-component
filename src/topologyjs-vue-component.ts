@@ -8,30 +8,22 @@ type ComponentInstanceFNParams = {
 
 type AddComponentInstanceFNParams = ComponentInstanceFNParams & {
   wrapper: HTMLElement;
-  instance: ComponentPublicInstance;
+  instance: CustomVueComponent;
   app: App<Element>;
 };
+
+interface CustomVueComponent extends ComponentPublicInstance{
+  penEvents?:VuePenEvents
+}
 
 class ComponentInstanceList {
   private componentInstanceList: {
     [penId: string]: {
       wrapper: HTMLElement;
-      instance: ComponentPublicInstance;
+      instance: CustomVueComponent;
       app: App<Element>;
     };
   } = {};
-
-  // addComponentList(componentName: string) {
-  //   this.componentInstanceList[componentName] = {};
-  // }
-
-  // removeComponentList(componentName: string) {
-  //   delete this.componentInstanceList[componentName];
-  // }
-
-  // getComponentList(componentName: string) {
-  //   return this.componentInstanceList[componentName];
-  // }
 
   addComponentInstance({
     id,
@@ -88,28 +80,97 @@ type EventsKeys =
   | "onChangeId";
 
 type PenEvents = {
-  [key in EventsKeys]?: (params: ComponentInstanceFNParams) => any;
+  [key in EventsKeys]?: (params: PenEventParams) => any;
 };
 
+type PenEventParams=AddComponentInstanceFNParams
+
+export type VuePenEvents= {
+  [key in EventsKeys]?: (pen:VuePen) => any;
+}
+
+const triggerInstanceEvents=(pen:VuePen,instance:CustomVueComponent,event:EventsKeys)=>{
+  if(instance.penEvents&&typeof instance.penEvents[event]==='function'){
+    instance.penEvents[event](pen)
+  }
+}
+
 const penEvents: PenEvents = {
-  onMove({ id }: ComponentInstanceFNParams) {
-    const { wrapper, instance } = componentInstanceList.getComponentInstance({
-      id,
-    });
+  onMove({ wrapper,instance }: PenEventParams) {
     return (pen: VuePen) => {
+      triggerInstanceEvents(pen,instance,'onMove')
       setElemPosition(pen, wrapper);
     };
   },
-  onDestroy({ id }: ComponentInstanceFNParams) {
-    console.log('????!');
-    return (pen:VuePen)=>{
-      componentInstanceList.removeComponentInstance({id})
-    }
+  onDestroy({ id, instance }: PenEventParams) {
+    return (pen: VuePen) => {
+      triggerInstanceEvents(pen,instance,'onDestroy')
+      componentInstanceList.removeComponentInstance({ id });
+    };
+  },
+  onValue({ instance }: PenEventParams) {
+    return (pen: VuePen) => {
+      triggerInstanceEvents(pen,instance,'onValue')
+    };
+  },
+  onChangeId({ instance }: PenEventParams) {
+    return (pen: VuePen) => {
+      triggerInstanceEvents(pen,instance,'onChangeId')
+    };
+  },
+  onClick({ instance }: PenEventParams) {
+    return (pen: VuePen) => {
+      triggerInstanceEvents(pen,instance,'onClick')
+    };
+  },
+  onInput({ instance }: PenEventParams) {
+    return (pen: VuePen) => {
+      triggerInstanceEvents(pen,instance,'onInput')
+    };
+  },
+  onMouseDown({ instance }: PenEventParams) {
+    return (pen: VuePen) => {
+      triggerInstanceEvents(pen,instance,'onMouseDown')
+    };
+  },
+  onMouseEnter({ instance }: PenEventParams) {
+    return (pen: VuePen) => {
+      triggerInstanceEvents(pen,instance,'onMouseEnter')
+    };
+  },
+  onMouseLeave({ instance }: PenEventParams) {
+    return (pen: VuePen) => {
+      triggerInstanceEvents(pen,instance,'onMouseLeave')
+    };
+  },
+  onMouseMove({ instance }: PenEventParams) {
+    return (pen: VuePen) => {
+      triggerInstanceEvents(pen,instance,'onMouseMove')
+    };
+  },
+  onMouseUp({ instance }: PenEventParams) {
+    return (pen: VuePen) => {
+      triggerInstanceEvents(pen,instance,'onMouseUp')
+    };
+  },
+  onResize({ instance }: PenEventParams) {
+    return (pen: VuePen) => {
+      triggerInstanceEvents(pen,instance,'onResize')
+    };
+  },
+  onRotate({ instance }: PenEventParams) {
+    return (pen: VuePen) => {
+      triggerInstanceEvents(pen,instance,'onRotate')
+    };
+  },
+  onShowInput({ instance }: PenEventParams) {
+    return (pen: VuePen) => {
+      triggerInstanceEvents(pen,instance,'onShowInput')
+    };
   },
 };
 
 const createTopologyComponent = (
-  componentName: string,
   component: Component
 ) => {
   const render = (pen: VuePen) => {
@@ -139,18 +200,24 @@ const createTopologyComponent = (
         render(pen);
         pen.rendered = true;
       } else if (!id.includes("-moving")) {
-        const { app } = componentInstanceList.getComponentInstance({
+        // 更新props
+        const {
+          app: { _instance },
+        } = componentInstanceList.getComponentInstance({
           id,
         });
-        app._instance.props.pen = pen;
-        app._instance.update();
+        if (Object.hasOwn(_instance.type.props, "pen")) {
+          _instance.props.pen = pen;
+          _instance.update();
+        }
       }
     }
 
     if (!pen.onDestroy) {
+      const instance=componentInstanceList.getComponentInstance({id})
       Object.keys(penEvents).forEach((key) => {
         pen[key] = penEvents[key]({
-          componentName,
+          ...instance,
           id,
         });
       });
@@ -165,7 +232,6 @@ export const registerVueComponents = (vueComponents: {
 }) => {
   Object.keys(vueComponents).forEach((componentName) => {
     topologyComponents[componentName] = createTopologyComponent(
-      componentName,
       vueComponents[componentName]
     );
   });
