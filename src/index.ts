@@ -1,1 +1,1 @@
-console.log('hello world')
+export { registerVueComponents } from './topologyjs-vue-component'

@@ -1,4 +1,4 @@
-import {Component, ComponentPublicInstance, createApp} from 'vue'
+import {App, Component, createApp} from 'vue'
 import { Pen,setElemPosition,register } from '@topology/core'
 
 type ComponentInstanceFNParams={
@@ -8,7 +8,7 @@ type ComponentInstanceFNParams={
 
 type AddComponentInstanceFNParams = ComponentInstanceFNParams & {
   wrapper:HTMLElement
-  instance:ComponentPublicInstance
+  instance:App<Element>
 }
 
 class ComponentInstanceList{
@@ -16,7 +16,7 @@ class ComponentInstanceList{
     [componentName:string]:{
       [key:string]:{
         wrapper:HTMLElement
-        instance:ComponentPublicInstance
+        instance:App<Element>
       }
     }
   }={}
@@ -42,8 +42,10 @@ class ComponentInstanceList{
   }
 
   removeComponentInstance({componentName,id}:ComponentInstanceFNParams){
-    const componentList=this.getComponentList(componentName)
-    delete componentList[id]
+    const componentInstance=this.getComponentList(componentName)[id]
+    componentInstance.wrapper.remove()
+    componentInstance.instance.unmount()
+    delete this.getComponentList(componentName)[id]
   }
 
   getComponentInstance({componentName,id}:ComponentInstanceFNParams){
@@ -72,13 +74,15 @@ const createTopologyComponent=(componentName:string,component:Component)=>{
       id
     })&&pen?.calculative?.canvas.externalElements.appendChild){
       const wrapper=document.createElement('div')
-      const instance=createApp(component).mount(wrapper)
+      const instance=createApp(component)
+      instance.mount(wrapper)
+      // console.log('instance',instance);
       pen?.calculative?.canvas.externalElements.appendChild(wrapper)
       setElemPosition(pen,wrapper)
       componentInstanceList.addComponentInstance({
         componentName,
         id,
-        wrapper,
+        wrapper, 
         instance
       })
     }
