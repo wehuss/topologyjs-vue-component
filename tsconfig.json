@@ -1,23 +1,22 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "baseUrl": ".",
+    "outDir": "./dist",
     "sourceMap": true,
     "declaration": true,
     "module": "esnext",
     "moduleResolution": "node",
-    "target": "es5",
+    "target": "esnext",
     "allowJs": true,
     "lib": [
-      "es2018",
-      "es2020.string",
+      "esnext",
       "dom"
     ],
     "downlevelIteration": true,
     "resolveJsonModule": true,
     "importHelpers":true,
     "allowSyntheticDefaultImports":true,
-    "esModuleInterop": true,
+    "skipLibCheck": true
   },
   "include": ["src/**/*.ts","src/**/*d.ts"],
   "exclude": ["node_modules", "dist"]
