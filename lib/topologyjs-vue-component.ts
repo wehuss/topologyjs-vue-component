@@ -2,6 +2,8 @@ import { App, Component, ComponentPublicInstance, createApp, h } from "vue";
 import { setElemPosition, register } from "@topology/core";
 import { VuePen } from "./vue-pen";
 
+export { VuePen };
+
 type ComponentInstanceFNParams = {
   id: string;
 };
