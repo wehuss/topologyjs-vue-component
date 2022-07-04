@@ -1,6 +1,6 @@
 {
   "name": "topologyjs-vue-component",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "在topology.js中使用vue组件",
   "files": ["dist"],
   "main": "./dist/index",
