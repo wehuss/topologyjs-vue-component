@@ -1,5 +1,5 @@
 # topologyjs-vue-component
-在topology.js中使用vue组件,本项目仅支持vue3
+在topology.js中使用Vue组件,本项目仅支持vue3
 
 
 
@@ -19,7 +19,7 @@ yarn add topologyjs-vue-component
 
 
 
-2.注册vue组件后即可使用
+2.注册Vue组件后即可使用
 
 ```typescript
 import { registerVueComponents } from "topologyjs-vue-component";
@@ -76,6 +76,35 @@ registerVueComponents({
 
 
 
-### 未完成功能
+### 在Vue组件内通过props获取画笔数据
 
-- 通过props传入具有响应性的pen数据
+```vue
+// 组合式api
+<script lang="ts" setup>
+    import { onMounted } from "vue";
+    import { VuePen } from "topologyjs-vue-component";
+    
+    const props=defineProps<{
+        pen:VuePen
+    }>()
+    onMounted(()=>{
+        console.log('pen',props.pen)
+    })
+</script>
+
+// 选项式api
+<script lang="ts">
+    import { defineComponent, PropType } from "vue"
+    import { VuePen } from "topologyjs-vue-component";
+    
+    export default defineComponent({
+        props:{
+            pen:{
+                type:Object as PropType<VuePen>,
+                default:()=>({})
+            }
+        },
+    })
+</script>
+```
+
