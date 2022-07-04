@@ -12,8 +12,8 @@ type AddComponentInstanceFNParams = ComponentInstanceFNParams & {
   app: App<Element>;
 };
 
-interface CustomVueComponent extends ComponentPublicInstance{
-  penEvents?:VuePenEvents
+interface CustomVueComponent extends ComponentPublicInstance {
+  penEvents?: VuePenEvents;
 }
 
 class ComponentInstanceList {
@@ -83,96 +83,98 @@ type PenEvents = {
   [key in EventsKeys]?: (params: PenEventParams) => any;
 };
 
-type PenEventParams=AddComponentInstanceFNParams
+type PenEventParams = AddComponentInstanceFNParams;
 
-export type VuePenEvents= {
-  [key in EventsKeys]?: (pen:VuePen) => any;
-}
+export type VuePenEvents = {
+  [key in EventsKeys]?: (pen: VuePen) => any;
+};
 
-const triggerInstanceEvents=(pen:VuePen,instance:CustomVueComponent,event:EventsKeys)=>{
-  if(instance.penEvents&&typeof instance.penEvents[event]==='function'){
-    instance.penEvents[event](pen)
+const triggerInstanceEvents = (
+  pen: VuePen,
+  instance: CustomVueComponent,
+  event: EventsKeys
+) => {
+  if (instance.penEvents && typeof instance.penEvents[event] === "function") {
+    instance.penEvents[event](pen);
   }
-}
+};
 
 const penEvents: PenEvents = {
-  onMove({ wrapper,instance }: PenEventParams) {
+  onMove({ wrapper, instance }: PenEventParams) {
     return (pen: VuePen) => {
-      triggerInstanceEvents(pen,instance,'onMove')
+      triggerInstanceEvents(pen, instance, "onMove");
       setElemPosition(pen, wrapper);
     };
   },
   onDestroy({ id, instance }: PenEventParams) {
     return (pen: VuePen) => {
-      triggerInstanceEvents(pen,instance,'onDestroy')
+      triggerInstanceEvents(pen, instance, "onDestroy");
       componentInstanceList.removeComponentInstance({ id });
     };
   },
   onValue({ instance }: PenEventParams) {
     return (pen: VuePen) => {
-      triggerInstanceEvents(pen,instance,'onValue')
+      triggerInstanceEvents(pen, instance, "onValue");
     };
   },
   onChangeId({ instance }: PenEventParams) {
     return (pen: VuePen) => {
-      triggerInstanceEvents(pen,instance,'onChangeId')
+      triggerInstanceEvents(pen, instance, "onChangeId");
     };
   },
   onClick({ instance }: PenEventParams) {
     return (pen: VuePen) => {
-      triggerInstanceEvents(pen,instance,'onClick')
+      triggerInstanceEvents(pen, instance, "onClick");
     };
   },
   onInput({ instance }: PenEventParams) {
     return (pen: VuePen) => {
-      triggerInstanceEvents(pen,instance,'onInput')
+      triggerInstanceEvents(pen, instance, "onInput");
     };
   },
   onMouseDown({ instance }: PenEventParams) {
     return (pen: VuePen) => {
-      triggerInstanceEvents(pen,instance,'onMouseDown')
+      triggerInstanceEvents(pen, instance, "onMouseDown");
     };
   },
   onMouseEnter({ instance }: PenEventParams) {
     return (pen: VuePen) => {
-      triggerInstanceEvents(pen,instance,'onMouseEnter')
+      triggerInstanceEvents(pen, instance, "onMouseEnter");
     };
   },
   onMouseLeave({ instance }: PenEventParams) {
     return (pen: VuePen) => {
-      triggerInstanceEvents(pen,instance,'onMouseLeave')
+      triggerInstanceEvents(pen, instance, "onMouseLeave");
     };
   },
   onMouseMove({ instance }: PenEventParams) {
     return (pen: VuePen) => {
-      triggerInstanceEvents(pen,instance,'onMouseMove')
+      triggerInstanceEvents(pen, instance, "onMouseMove");
     };
   },
   onMouseUp({ instance }: PenEventParams) {
     return (pen: VuePen) => {
-      triggerInstanceEvents(pen,instance,'onMouseUp')
+      triggerInstanceEvents(pen, instance, "onMouseUp");
     };
   },
   onResize({ instance }: PenEventParams) {
     return (pen: VuePen) => {
-      triggerInstanceEvents(pen,instance,'onResize')
+      triggerInstanceEvents(pen, instance, "onResize");
     };
   },
   onRotate({ instance }: PenEventParams) {
     return (pen: VuePen) => {
-      triggerInstanceEvents(pen,instance,'onRotate')
+      triggerInstanceEvents(pen, instance, "onRotate");
     };
   },
   onShowInput({ instance }: PenEventParams) {
     return (pen: VuePen) => {
-      triggerInstanceEvents(pen,instance,'onShowInput')
+      triggerInstanceEvents(pen, instance, "onShowInput");
     };
   },
 };
 
-const createTopologyComponent = (
-  component: Component
-) => {
+const createTopologyComponent = (component: Component) => {
   const render = (pen: VuePen) => {
     console.log("render!!!!");
     const wrapper = document.createElement("div");
@@ -207,14 +209,16 @@ const createTopologyComponent = (
           id,
         });
         if (Object.hasOwn(_instance.type.props, "pen")) {
-          _instance.props.pen = pen;
-          _instance.update();
+          _instance.props.pen = {
+            ...pen,
+          };
+          // _instance.update();
         }
       }
     }
 
     if (!pen.onDestroy) {
-      const instance=componentInstanceList.getComponentInstance({id})
+      const instance = componentInstanceList.getComponentInstance({ id });
       Object.keys(penEvents).forEach((key) => {
         pen[key] = penEvents[key]({
           ...instance,
